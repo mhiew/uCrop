@@ -89,7 +89,18 @@ public class BitmapLoadTask extends AsyncTask<Void, Void, BitmapLoadTask.BitmapW
 
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
+        InputStream measurementStream = null;
+        try {
+            measurementStream = mContext.getContentResolver().openInputStream(mInputUri);
+            BitmapFactory.decodeStream(measurementStream, null, options);
+        } catch (IOException e) {
+            Log.e(TAG, "doInBackground: ImageDecoder.createSource: ", e);
+            return new BitmapWorkerResult(new IllegalArgumentException("Bitmap could not be decoded from the Uri: [" + mInputUri + "]", e));
+        } finally {
+            BitmapLoadUtils.close(measurementStream);
+        }
         options.inSampleSize = BitmapLoadUtils.calculateInSampleSize(options, mRequiredWidth, mRequiredHeight);
+
         options.inJustDecodeBounds = false;
 
         Bitmap decodeSampledBitmap = null;
