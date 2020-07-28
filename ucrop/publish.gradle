@@ -1,0 +1,40 @@
+apply plugin: 'com.jfrog.bintray'
+
+group 'com.mhiew.ucrop'
+version '0.0.1'
+
+project.ext {
+    mavGitUrl = 'https://github.com/mhiew/uCrop.git'
+    mavProjectName = 'ucrop'
+    mavLibraryLicenses = ["Apache-2.0":'http://www.apache.org/licenses/LICENSE-2.0.txt']
+    mavLibraryDescription = 'Fork of uCrop library with bug fixes'
+    mavPublishToMavenLocal = true
+    mavSiteUrl = 'https://github.com/mhiew/uCrop'
+}
+
+def properties = new Properties()
+properties.load(new FileInputStream("local.properties"))
+
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+    publications = ['mavenPublish']
+    configurations = ['archives']
+    override = true
+    pkg {
+        repo = 'UCrop'
+        name = 'com.mhiew.ucrop'
+        description = "Fork of uCrop library with bug fixes"
+        publicDownloadNumbers = true
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/mhiew/uCrop'
+        version {
+            name = this.version
+            desc = "Version ${this.version}"
+            released = new Date()
+            vcsTag = this.version
+        }
+    }
+}
+
+apply from: 'https://raw.githubusercontent.com/sky-uk/gradle-maven-plugin/master/gradle-mavenizer.gradle'
